@@ -1,0 +1,5 @@
+rules:
+- TommyTrinder\PhpstanRules\Rules\NoEmptyConditionalBlocksRule
+- TommyTrinder\PhpstanRules\Rules\NoDynamicPropertyAccessRule
+- TommyTrinder\PhpstanRules\Rules\MissingArgumentTypeDeclarationRule
+- TommyTrinder\PhpstanRules\Rules\MissingMethodReturnTypeDeclarationRule

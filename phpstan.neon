@@ -1,0 +1,13 @@
+parameters:
+    level: max
+    paths:
+    - src
+    - tests
+    excludePaths:
+    - tests/Rules/Fixtures
+
+rules:
+- TommyTrinder\PhpstanRules\Rules\NoEmptyConditionalBlocksRule
+- TommyTrinder\PhpstanRules\Rules\NoDynamicPropertyAccessRule
+- TommyTrinder\PhpstanRules\Rules\MissingArgumentTypeDeclarationRule
+- TommyTrinder\PhpstanRules\Rules\MissingMethodReturnTypeDeclarationRule

@@ -1,0 +1,41 @@
+---
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches: [ $default-branch ]
+
+
+jobs:
+  checks:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install PHP 8.1
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: "Get composer cache directory"
+        id: composer-cache-dir
+        run: echo "DIR=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.DIR }}
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: "Install dependencies"
+        run: composer install --no-progress --prefer-dist --optimize-autoloader 
+
+      - name: " Run CI checks"
+        run: composer run-script ci 
+
