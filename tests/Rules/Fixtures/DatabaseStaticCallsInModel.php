@@ -21,6 +21,12 @@ class DatabaseStaticCallsInModel extends Model
     {
         self::aStaticMethod(); // OK
     }
+
+    public function saveOnService(AService $service): void
+    {
+        $service::where('foo', 'bar'); // OK
+        AService::where('foo', 'bar'); // OK
+    }
 }
 
 

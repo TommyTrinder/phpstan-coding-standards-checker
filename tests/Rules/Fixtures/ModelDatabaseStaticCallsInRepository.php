@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class ModelDatabaseStaticCallsInRepository
 {
-    public function getPeople(): array
+    public function callDatabaseStaticMethodOnModel(): array
     {
-
         return MyModel::where('name', 'Tommy'); // OK;
     }
+
+    public function callDatabaseStaticMethodOnNoneModel(): array
+    {
+        return AService::where('name', 'Tommy'); // OK;
+    }
+
 
 }
 
