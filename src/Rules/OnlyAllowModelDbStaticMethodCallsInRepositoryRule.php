@@ -11,6 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<StaticCall> */
 final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
@@ -73,9 +74,7 @@ final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
             }
         }
 
-        $callingClass = $scope->getClassReflection()?->getName();
-
-        if (($callingClass !== null) && str_ends_with($callingClass, 'Repository')) {
+        if (TypeDetector::isInRepositoryClass($scope)) {
             return [];
         }
 
