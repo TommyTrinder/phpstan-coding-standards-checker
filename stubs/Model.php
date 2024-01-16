@@ -13,4 +13,8 @@ class Model
     {
         return [];
     }
+
+    public function save(): void
+    {
+    }
 }

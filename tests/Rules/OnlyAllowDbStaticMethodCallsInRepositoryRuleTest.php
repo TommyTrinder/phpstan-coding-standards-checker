@@ -17,14 +17,14 @@ final class OnlyAllowDbStaticMethodCallsInRepositoryRuleTest extends AbstractRul
     public function testDatabaseCallsInModel(): void
     {
         $this->assertIssuesReported(
-            __DIR__.'/Fixtures/DatabaseCallsInModel.php'
+            __DIR__.'/Fixtures/DatabaseStaticCallsInModel.php'
         );
     }
 
     public function testDatabaseCallsInRepository(): void
     {
         $this->assertIssuesReported(
-            __DIR__.'/Fixtures/ModelDatabaseCallsInRepository.php'
+            __DIR__.'/Fixtures/ModelDatabaseStaticCallsInRepository.php'
         );
     }
 

@@ -5,7 +5,7 @@ namespace TommyTrinder\PhpstanRules\Tests\Rules\Fixtures;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DatabaseCallsInModel extends Model
+class DatabaseStaticCallsInModel extends Model
 {
     public function getPeople(): array
     {
@@ -24,10 +24,10 @@ class DatabaseCallsInModel extends Model
 }
 
 
-$person = new DatabaseCallsInModel();
+$person = new DatabaseStaticCallsInModel();
 
 $people = $person::where('foo', 'bar'); // ERROR
 
-$people2 = DatabaseCallsInModel::where('foo', 'bar'); // ERROR
+$people2 = DatabaseStaticCallsInModel::where('foo', 'bar'); // ERROR
 
 $person::aStaticMethod(); // OK
