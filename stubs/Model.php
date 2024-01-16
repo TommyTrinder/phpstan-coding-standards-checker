@@ -8,4 +8,9 @@ class Model
     {
         return $this->$name;
     }
+
+    public static function where(string $name, string $value): array
+    {
+        return [];
+    }
 }
