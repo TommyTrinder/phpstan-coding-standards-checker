@@ -11,3 +11,5 @@ rules:
 - TommyTrinder\PhpstanRules\Rules\NoDynamicPropertyAccessRule
 - TommyTrinder\PhpstanRules\Rules\MissingArgumentTypeDeclarationRule
 - TommyTrinder\PhpstanRules\Rules\MissingMethodReturnTypeDeclarationRule
+- TommyTrinder\PhpstanRules\Rules\OnlyAllowModelDbMethodCallsInRepositoryRule
+- TommyTrinder\PhpstanRules\Rules\OnlyAllowModelDbStaticMethodCallsInRepositoryRule

@@ -24,6 +24,7 @@
         },
         "files": [
             "stubs/Controller.php",
+            "stubs/DB.php",
             "stubs/Model.php"
         ]
     },

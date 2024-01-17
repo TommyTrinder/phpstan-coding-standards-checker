@@ -1,14 +1,11 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace TommyTrinder\PhpstanRules\Tests\Rules\Fixtures;
 
-class Model
+use Illuminate\Database\Eloquent\Model;
+
+class AService
 {
-    public function __get(string $name)
-    {
-        return $this->$name;
-    }
-
     public static function where(string $name, string $value): array
     {
         return [];
@@ -16,5 +13,6 @@ class Model
 
     public function save(): void
     {
+
     }
 }
