@@ -23,6 +23,7 @@
             "TommyTrinder\\PhpstanRules\\Tests\\": "tests/"
         },
         "files": [
+            "stubs/Controller.php",
             "stubs/DB.php",
             "stubs/Model.php"
         ]
