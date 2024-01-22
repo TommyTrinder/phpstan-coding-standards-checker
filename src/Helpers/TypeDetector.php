@@ -23,4 +23,14 @@ final class TypeDetector
 
         return str_ends_with($callingClass, 'Repository');
     }
+
+    public static function isInRepositoryClass(Scope $scope): bool
+    {
+        $className = $scope->getClassReflection()?->getName();
+        if ($className === null) {
+            return false;
+        }
+
+        return str_ends_with(haystack: $className, needle: 'Repository');
+    }
 }
