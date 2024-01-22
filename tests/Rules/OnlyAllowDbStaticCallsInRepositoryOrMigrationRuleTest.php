@@ -4,14 +4,14 @@ namespace TommyTrinder\PhpstanRules\Tests\Rules;
 
 use DaveLiddament\PhpstanRuleTestHelper\AbstractRuleTestCase;
 use PHPStan\Rules\Rule;
-use TommyTrinder\PhpstanRules\Rules\OnlyAllowDbStaticCallsInRepositoryRule;
+use TommyTrinder\PhpstanRules\Rules\OnlyAllowDbStaticCallsInRepositoryOrMigrationRule;
 
-/** @extends AbstractRuleTestCase<OnlyAllowDbStaticCallsInRepositoryRule> */
-final class OnlyAllowDbStaticCallsInRepositoryRuleTest extends AbstractRuleTestCase
+/** @extends AbstractRuleTestCase<OnlyAllowDbStaticCallsInRepositoryOrMigrationRule> */
+final class OnlyAllowDbStaticCallsInRepositoryOrMigrationRuleTest extends AbstractRuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new OnlyAllowDbStaticCallsInRepositoryRule();
+        return new OnlyAllowDbStaticCallsInRepositoryOrMigrationRule();
     }
 
     public function testDatabaseCallsNotInRepository(): void
@@ -25,6 +25,13 @@ final class OnlyAllowDbStaticCallsInRepositoryRuleTest extends AbstractRuleTestC
     {
         $this->assertIssuesReported(
             __DIR__.'/Fixtures/DbCallInRepository.php'
+        );
+    }
+
+    public function testDatabaseCallsInMigration(): void
+    {
+        $this->assertIssuesReported(
+            __DIR__.'/Fixtures/DbCallInMigration.php'
         );
     }
 

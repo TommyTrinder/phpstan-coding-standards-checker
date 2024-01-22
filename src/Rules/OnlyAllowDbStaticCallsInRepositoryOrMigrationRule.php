@@ -12,7 +12,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<StaticCall> */
-final class OnlyAllowDbStaticCallsInRepositoryRule implements Rule
+final class OnlyAllowDbStaticCallsInRepositoryOrMigrationRule implements Rule
 {
     public function getNodeType(): string
     {
@@ -44,7 +44,7 @@ final class OnlyAllowDbStaticCallsInRepositoryRule implements Rule
             return [];
         }
 
-        if (TypeDetector::isInRepositoryClass($scope)) {
+        if (TypeDetector::isInRepositoryOrMigrationClass($scope)) {
             return [];
         }
 

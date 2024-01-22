@@ -14,7 +14,7 @@ use TommyTrinder\PhpstanRules\Helpers\NameExtractor;
 use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<StaticCall> */
-final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
+final class OnlyAllowModelDbStaticMethodCallsInRepositoryOrMigrationRule implements Rule
 {
     private const DATABASE_METHOD_NAMES = [
         'all',
@@ -74,7 +74,7 @@ final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
             }
         }
 
-        if (TypeDetector::isInRepositoryClass($scope)) {
+        if (TypeDetector::isInRepositoryOrMigrationClass($scope)) {
             return [];
         }
 
