@@ -28,6 +28,13 @@ final class NoDynamicPropertyAccessRuleTest extends AbstractRuleTestCase
         );
     }
 
+    public function testAccessModelPropertyInMigration(): void
+    {
+        $this->assertIssuesReported(
+            __DIR__.'/Fixtures/DynamicPropertyAccessModelFromMigration.php'
+        );
+    }
+
     protected function getErrorFormatter(): string
     {
         return 'Accessing dynamic properties is not allowed.';
