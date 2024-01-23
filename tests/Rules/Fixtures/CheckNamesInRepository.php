@@ -48,4 +48,25 @@ class CheckNamesInRepository extends Model
     {
         return 1;
     }
+
+    public function findModels(): iterable // OK
+    {
+        return [];
+    }
+
+    public function findModelsWrong(): ?iterable // ERROR find methods must NOT be nullable if returning an iterable
+    {
+        return [];
+    }
+
+    public function getModels(): iterable // OK
+    {
+        return [];
+    }
+
+    public function getModelsWrong(): ?iterable // ERROR get methods must NOT have nullable in return type
+    {
+        return [];
+    }
+    
 }
