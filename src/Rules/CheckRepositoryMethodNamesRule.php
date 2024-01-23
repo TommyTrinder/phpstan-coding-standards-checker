@@ -3,12 +3,12 @@
 namespace TommyTrinder\PhpstanRules\Rules;
 
 use PhpParser\Node;
-use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\Type;
 use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<ClassMethod> */
@@ -46,22 +46,18 @@ class CheckRepositoryMethodNamesRule implements Rule
             return $return;
         }
 
-        $returnType = $node->returnType;
+        $returnType = $scope->getClassReflection()?->getMethod($methodName, $scope)->getVariants()[0]->getReturnType();
+
+        if ($returnType === null) {
+            return [];
+        }
 
         if (str_starts_with(haystack: $methodName, needle: 'find')) {
-            if (!$returnType instanceof NullableType) {
-                return [
-                    RuleErrorBuilder::message('find methods must have nullable in return type')->build(),
-                ];
-            }
+            return $this->processFindMethod($returnType);
         }
 
         if (str_starts_with(haystack: $methodName, needle: 'get')) {
-            if ($returnType instanceof NullableType) {
-                return [
-                    RuleErrorBuilder::message('get methods must NOT have nullable in return type')->build(),
-                ];
-            }
+            return $this->processGetMethod($returnType);
         }
 
         return [];
@@ -85,5 +81,45 @@ class CheckRepositoryMethodNamesRule implements Rule
         }
 
         return null;
+    }
+
+    /** @return list<RuleError> */
+    private function processFindMethod(Type $returnType): array
+    {
+        $nullable = $returnType->isNull();
+        $iterable = $returnType->isIterable();
+
+        // Only returns iterable - that's fine
+        if ($iterable->yes()) {
+            return [];
+        }
+
+        // Returns iterable or null, that is not allowed
+        if ($nullable->maybe() && $iterable->maybe()) {
+            return [
+                RuleErrorBuilder::message('find methods must NOT be nullable if returning an iterable')->build(),
+            ];
+        }
+
+        // Does not return nullable, not OK.
+        if ($nullable->no()) {
+            return [
+                RuleErrorBuilder::message('find methods must have nullable in return type')->build(),
+            ];
+        }
+
+        return [];
+    }
+
+    /** @return list<RuleError> */
+    private function processGetMethod(Type $returnType): array
+    {
+        if (!$returnType->isNull()->no()) {
+            return [
+                RuleErrorBuilder::message('get methods must NOT have nullable in return type')->build(),
+            ];
+        }
+
+        return [];
     }
 }
