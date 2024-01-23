@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use TommyTrinder\PhpstanRules\Helpers\NameExtractor;
+use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<StaticCall> */
-final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
+final class OnlyAllowModelDbStaticMethodCallsInRepositoryOrMigrationRule implements Rule
 {
     private const DATABASE_METHOD_NAMES = [
         'all',
@@ -39,13 +40,13 @@ final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        $methodNameNode = $node->name;
+        $methodName = NameExtractor::getFunctionName($node);
 
-        if (!$methodNameNode instanceof Identifier) {
+        if ($methodName === null) {
             return [];
         }
 
-        if (!in_array($methodNameNode->name, self::DATABASE_METHOD_NAMES)) {
+        if (!in_array($methodName, self::DATABASE_METHOD_NAMES, true)) {
             return [];
         }
 
@@ -73,9 +74,7 @@ final class OnlyAllowModelDbStaticMethodCallsInRepositoryRule implements Rule
             }
         }
 
-        $callingClass = $scope->getClassReflection()?->getName();
-
-        if (($callingClass !== null) && str_ends_with($callingClass, 'Repository')) {
+        if (TypeDetector::isInRepositoryOrMigrationClass($scope)) {
             return [];
         }
 

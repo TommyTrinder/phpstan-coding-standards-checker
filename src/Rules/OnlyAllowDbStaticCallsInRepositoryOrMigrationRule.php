@@ -9,9 +9,10 @@ use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<StaticCall> */
-final class OnlyAllowDbStaticCallsInRepositoryRule implements Rule
+final class OnlyAllowDbStaticCallsInRepositoryOrMigrationRule implements Rule
 {
     public function getNodeType(): string
     {
@@ -43,9 +44,7 @@ final class OnlyAllowDbStaticCallsInRepositoryRule implements Rule
             return [];
         }
 
-        $callingClass = $scope->getClassReflection()?->getName();
-
-        if (($callingClass !== null) && str_ends_with($callingClass, 'Repository')) {
+        if (TypeDetector::isInRepositoryOrMigrationClass($scope)) {
             return [];
         }
 

@@ -5,14 +5,15 @@ namespace TommyTrinder\PhpstanRules\Rules;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use TommyTrinder\PhpstanRules\Helpers\NameExtractor;
+use TommyTrinder\PhpstanRules\Helpers\TypeDetector;
 
 /** @implements Rule<MethodCall> */
-final class OnlyAllowModelDbMethodCallsInRepositoryRule implements Rule
+final class OnlyAllowModelDbMethodCallsInRepositoryOrMigrationRule implements Rule
 {
     private const DATABASE_METHOD_NAMES = [
         'save',
@@ -30,13 +31,13 @@ final class OnlyAllowModelDbMethodCallsInRepositoryRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        $methodNameNode = $node->name;
+        $methodName = NameExtractor::getFunctionName($node);
 
-        if (!$methodNameNode instanceof Identifier) {
+        if ($methodName === null) {
             return [];
         }
 
-        if (!in_array($methodNameNode->name, self::DATABASE_METHOD_NAMES)) {
+        if (!in_array($methodName, self::DATABASE_METHOD_NAMES)) {
             return [];
         }
 
@@ -53,9 +54,7 @@ final class OnlyAllowModelDbMethodCallsInRepositoryRule implements Rule
             return [];
         }
 
-        $callingClass = $scope->getClassReflection()?->getName();
-
-        if (($callingClass !== null) && str_ends_with($callingClass, 'Repository')) {
+        if (TypeDetector::isInRepositoryOrMigrationClass($scope)) {
             return [];
         }
 

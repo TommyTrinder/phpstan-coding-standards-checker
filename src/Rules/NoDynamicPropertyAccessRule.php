@@ -3,6 +3,7 @@
 namespace TommyTrinder\PhpstanRules\Rules;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Migrations\Migration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PHPStan\Analyser\Scope;
@@ -25,6 +26,13 @@ final class NoDynamicPropertyAccessRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        // If we are in a migration, everything is OK
+        $scopeClassReflection = $scope->getClassReflection();
+        if ($scopeClassReflection !== null && $scopeClassReflection->isSubclassOf(Migration::class)) {
+            return [];
+        }
+
+        // Now check if attempting to access a property defined in the docblock anywhere apart from in a Model
         $property = $node->name;
 
         if (!$property instanceof Node\Identifier) {
@@ -42,7 +50,7 @@ final class NoDynamicPropertyAccessRule implements Rule
                 continue;
             }
 
-            if ($scope->getClassReflection()?->getName() === $classReflection->getName()) {
+            if ($scopeClassReflection?->getName() === $classReflection->getName()) {
                 continue;
             }
 
